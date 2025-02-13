@@ -15,27 +15,27 @@ const UserInputSection = ({ userInput, handleChange }: UserInputSectionProps) =>
       <div className="grid grid-cols-2 gap-x-8">
         <UserInput
           title="INITIAL INVESTMENT"
-          userInput={userInput}
-          inputIdentifier="InitialInvestment"
-          handleChange={handleChange}
+          type="number"
+          value={userInput["InitialInvestment"]}
+          onChange={(e) => handleChange("InitialInvestment", +e.target.value)}
         />
         <UserInput
           title="ANNUAL INVESTMENT"
-          userInput={userInput}
-          inputIdentifier="AnnualInvestment"
-          handleChange={handleChange}
+          type="number"
+          value={userInput["AnnualInvestment"]}
+          onChange={(e) => handleChange("AnnualInvestment", +e.target.value)}
         />
         <UserInput
           title="EXPECTED RETURN"
-          userInput={userInput}
-          inputIdentifier="ExpectedReturn"
-          handleChange={handleChange}
+          type="number"
+          value={userInput["ExpectedReturn"]}
+          onChange={(e) => handleChange("ExpectedReturn", +e.target.value)}
         />
         <UserInput
           title="DURATION"
-          userInput={userInput}
-          inputIdentifier="Duration"
-          handleChange={handleChange}
+          type="number"
+          value={userInput["Duration"]}
+          onChange={(e) => handleChange("Duration", +e.target.value)}
         />
       </div>
     </section>
