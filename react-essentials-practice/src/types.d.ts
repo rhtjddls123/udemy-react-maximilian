@@ -4,3 +4,5 @@ export type userInput = {
   ExpectedReturn: number;
   Duration: number;
 };
+
+type InputType = "InitialInvestment" | "AnnualInvestment" | "ExpectedReturn" | "Duration";
