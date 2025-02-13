@@ -19,7 +19,10 @@ const Main = () => {
   return (
     <main>
       <UserInputSection userInput={userInput} handleChange={handleChange} />
-      <Result />
+      {userInput.Duration > 0 && <Result userInput={userInput} />}
+      {!(userInput.Duration > 0) && (
+        <p className="text-center mt-4">Please enter a duration greater than zero.</p>
+      )}
     </main>
   );
 };

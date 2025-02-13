@@ -9,7 +9,7 @@ interface UserInputSectionProps {
 const UserInputSection = ({ userInput, handleChange }: UserInputSectionProps) => {
   return (
     <section
-      className="max-w-lg mx-auto p-4 rounded"
+      className="max-w-lg mx-auto my-8 p-4 rounded"
       style={{ background: "linear-gradient(180deg, #307e6c, #2b996d)" }}
     >
       <div className="grid grid-cols-2 gap-x-8">
