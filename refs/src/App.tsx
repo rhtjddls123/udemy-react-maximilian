@@ -1,11 +1,12 @@
 import "./App.css";
-import Player from "./components/Player";
+import PlayerRef from "./components/PlayerRef";
 
 function App() {
   return (
     <>
-      <Player />
-      <div className="max-w-3xl my-12 mx-auto flex flex-wrap gap-2"></div>
+      {/* <Player /> */}
+      <PlayerRef />
+      <div className="flex flex-wrap max-w-3xl gap-2 mx-auto my-12"></div>
     </>
   );
 }
