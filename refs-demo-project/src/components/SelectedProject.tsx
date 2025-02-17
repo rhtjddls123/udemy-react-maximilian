@@ -1,9 +1,20 @@
+import Tasks from "./Tasks";
+
 interface SelectedProjectProps {
+  tasks: TaskType[];
   project: ProjectType;
   onDeleteProject: () => void;
+  onAddTask: (text: string) => void;
+  onDeleteTask: (id: number) => void;
 }
 
-const SelectedProject = ({ project, onDeleteProject }: SelectedProjectProps) => {
+const SelectedProject = ({
+  tasks,
+  project,
+  onDeleteProject,
+  onAddTask,
+  onDeleteTask
+}: SelectedProjectProps) => {
   const { title, description, dueDate } = project;
   return (
     <div className="w-[35rem] mt-16">
@@ -17,14 +28,7 @@ const SelectedProject = ({ project, onDeleteProject }: SelectedProjectProps) => 
         <p className="mb-4 text-stone-400">{dueDate}</p>
         <p className="text-stone-600 whitespace-pre-wrap">{description}</p>
       </header>
-      <section>
-        <h2 className="text-stone-700 mb-4 font-bold text-2xl">Tasks</h2>
-        <div className="flex gap-4 items-center">
-          <input type="text" className="w-64 px-2 py-1 rounded-sm bg-stone-200" />
-          <button className="text-stone-700 hover:text-stone-950">Add Task</button>
-        </div>
-        <p className="text-stone-800 my-4">This project does not have any tasks yet.</p>
-      </section>
+      <Tasks tasks={tasks} onAddTask={onAddTask} onDeleteTask={onDeleteTask} />
     </div>
   );
 };

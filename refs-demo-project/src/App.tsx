@@ -8,7 +8,8 @@ import SelectedProject from "./components/SelectedProject";
 function App() {
   const [projectState, setProjectState] = useState<PropjectStateType>({
     selectedProjectId: undefined,
-    projects: []
+    projects: [],
+    tasks: []
   });
 
   const handleStartAddProject = () => {
@@ -42,6 +43,20 @@ function App() {
     setProjectState((prev) => ({ ...prev, selectedProjectId: id }));
   };
 
+  const handleAddTask = (text: string) => {
+    const teskLength = projectState.tasks.length;
+    const taskId = teskLength > 0 ? projectState.tasks[teskLength - 1].id + 1 : 0;
+    if (projectState.selectedProjectId === 0 || projectState.selectedProjectId) {
+      const newTask: TaskType = { id: taskId, projectId: projectState.selectedProjectId, text };
+      setProjectState((prev) => ({ ...prev, tasks: [...prev.tasks, newTask] }));
+    }
+  };
+
+  const handleDeleteTask = (id: number) => {
+    const newTasks = projectState.tasks.filter((task) => task.id !== id);
+    setProjectState((prev) => ({ ...prev, tasks: newTasks }));
+  };
+
   let content;
 
   const seletedProject = projectState.projects.find(
@@ -55,7 +70,17 @@ function App() {
   } else if (projectState.selectedProjectId === undefined) {
     content = <NoProjectSelected onStartAddProject={handleStartAddProject} />;
   } else if (seletedProject) {
-    content = <SelectedProject project={seletedProject} onDeleteProject={handleDeleteProject} />;
+    content = (
+      <SelectedProject
+        tasks={projectState.tasks.filter(
+          (task) => task.projectId === projectState.selectedProjectId
+        )}
+        project={seletedProject}
+        onDeleteProject={handleDeleteProject}
+        onAddTask={handleAddTask}
+        onDeleteTask={handleDeleteTask}
+      />
+    );
   }
   return (
     <main className="my-8 h-screen flex gap-8">
