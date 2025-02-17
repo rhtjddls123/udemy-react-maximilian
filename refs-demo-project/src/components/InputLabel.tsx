@@ -1,8 +1,9 @@
-import { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
+import { InputHTMLAttributes, Ref, TextareaHTMLAttributes } from "react";
 
 interface InputLabelProps {
   title: string;
   InputType?: "input" | "textarea";
+  ref?: Ref<HTMLInputElement | HTMLTextAreaElement>;
 }
 
 type InputElementProps<T extends "input" | "textarea"> = T extends "input"
