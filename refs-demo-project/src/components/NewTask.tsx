@@ -8,7 +8,7 @@ const NewTask = ({ onAddTask }: NewTaskProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleAddTask = () => {
-    if (inputRef.current) {
+    if (inputRef.current && inputRef.current.value.trim() !== "") {
       onAddTask(inputRef.current.value);
       inputRef.current.value = "";
     }
