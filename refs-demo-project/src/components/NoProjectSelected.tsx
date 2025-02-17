@@ -1,6 +1,6 @@
 import noPojectImage from "../assets/no-projects.png";
 
-const NewProject = () => {
+const NoProjectSelected = () => {
   return (
     <div className="mt-24 text-center w-2/3">
       <img
@@ -19,4 +19,4 @@ const NewProject = () => {
   );
 };
 
-export default NewProject;
+export default NoProjectSelected;
