@@ -1,8 +1,8 @@
 import { InputHTMLAttributes, Ref, TextareaHTMLAttributes } from "react";
 
-interface InputLabelProps {
+interface InputLabelProps<T extends "input" | "textarea"> {
   title: string;
-  InputType?: "input" | "textarea";
+  InputType?: T;
   ref?: Ref<HTMLInputElement | HTMLTextAreaElement>;
 }
 
@@ -12,9 +12,10 @@ type InputElementProps<T extends "input" | "textarea"> = T extends "input"
 
 const InputLabel = <T extends "input" | "textarea">({
   title,
-  InputType = "input",
+  InputType,
   ...props
-}: InputLabelProps & InputElementProps<T>) => {
+}: InputLabelProps<T> & InputElementProps<T>) => {
+  const resolvedInputType = InputType ?? "input";
   const classes =
     "w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600";
 
@@ -23,16 +24,16 @@ const InputLabel = <T extends "input" | "textarea">({
       <label className="text-sm font-bold uppercase text-stone-500" htmlFor={title}>
         {title}
       </label>
-      {InputType === "input" && (
-        <InputType
+      {resolvedInputType === "input" && (
+        <input
           className={classes}
           id={title}
           type="text"
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
       )}
-      {InputType === "textarea" && (
-        <InputType
+      {resolvedInputType === "textarea" && (
+        <textarea
           className={classes}
           id={title}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
