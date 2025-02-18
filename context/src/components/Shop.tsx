@@ -1,21 +1,16 @@
-import { DUMMY_PRODUCTS } from "../dummy-products.js";
-import Product from "./Product.jsx";
+import { ReactNode } from "react";
 
 interface ShopProps {
-  onAddItemToCart: (id: string) => void;
+  children: ReactNode;
 }
 
-export default function Shop({ onAddItemToCart }: ShopProps) {
+export default function Shop({ children }: ShopProps) {
   return (
     <section className="w-[80%] my-8 mx-auto">
       <h2 className="text-2xl text-[#a59b8b] uppercase">Elegant Clothing For Everyone</h2>
 
       <ul className="list-none m-0 p-0 grid grid-cols-[repeat(auto-fit,_minmax(20rem,_1fr))] gap-8">
-        {DUMMY_PRODUCTS.map((product) => (
-          <li key={product.id}>
-            <Product {...product} onAddToCart={onAddItemToCart} />
-          </li>
-        ))}
+        {children}
       </ul>
     </section>
   );
