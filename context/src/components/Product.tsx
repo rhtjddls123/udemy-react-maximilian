@@ -1,15 +1,9 @@
-interface ProductProps extends ProductType {
-  onAddToCart: (id: string) => void;
-}
+import { use } from "react";
+import { CartContext } from "../store/CartContext";
 
-export default function Product({
-  id,
-  image,
-  title,
-  price,
-  description,
-  onAddToCart
-}: ProductProps) {
+export default function Product({ id, image, title, price, description }: ProductType) {
+  const { addItemToCart } = use(CartContext);
+
   return (
     <article className="h-full bg-[#5f4e33] rounded-md flex flex-col shadow-md">
       <img className="w-full rounded-md" src={image} alt={title} />
@@ -22,7 +16,7 @@ export default function Product({
         <p className="text-right">
           <button
             className="bg-[#f4b115] border-none rounded-md py-2 px-4 text-[#201e1a] text-base cursor-pointer hover:bg-[#f5b744]"
-            onClick={() => onAddToCart(id)}
+            onClick={() => addItemToCart(id)}
           >
             Add to Cart
           </button>

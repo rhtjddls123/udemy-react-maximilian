@@ -1,45 +1,33 @@
-import { useRef } from "react";
+import { use, useRef } from "react";
 
 import CartModal, { HandleCartModal } from "./CartModal.jsx";
+import { CartContext } from "../store/CartContext.js";
+import ModalButton from "./ModalButton.js";
 
-interface HeaderProps {
-  cart: ShoppingCartType;
-  onUpdateCartItemQuantity: (productId: string, amount: number) => void;
-}
-
-export default function Header({ cart, onUpdateCartItemQuantity }: HeaderProps) {
+export default function Header() {
   const modal = useRef<HandleCartModal>(null);
+  const { items } = use(CartContext);
 
-  const cartQuantity = cart.items.length;
+  const cartQuantity = items.length;
 
   function handleOpenCartClick() {
     modal.current?.open();
   }
 
-  let modalActions = (
-    <button className="bg-transparent border-none rounded-md text-[#201e1a] cursor-pointer text-[1.1rem] hover:text-[#453719] last-of-type:bg-[#271e07] last-of-type:border-none last-of-type:rounded-md last-of-type:py-2 last-of-type:px-4 last-of-type:text-[#f9efda] last-of-type:text-base last-of-type:cursor-pointer last-of-type:hover:bg-[#382e1b]">
-      Close
-    </button>
-  );
+  let modalActions = <ModalButton>Close</ModalButton>;
 
   if (cartQuantity > 0) {
     modalActions = (
       <>
-        <button>Close</button>
-        <button>Checkout</button>
+        <ModalButton>Close</ModalButton>
+        <ModalButton>Checkout</ModalButton>
       </>
     );
   }
 
   return (
     <>
-      <CartModal
-        ref={modal}
-        cartItems={cart.items}
-        onUpdateCartItemQuantity={onUpdateCartItemQuantity}
-        title="Your Cart"
-        actions={modalActions}
-      />
+      <CartModal ref={modal} title="Your Cart" actions={modalActions} />
       <header className="flex justify-between items-center py-12 px-[15%]">
         <div className="flex items-center">
           <img className="w-20 mr-6" src="logo.png" alt="Elegant model" />

@@ -1,9 +1,8 @@
-interface CartProps {
-  items: ItemType[];
-  onUpdateItemQuantity: (productId: string, amount: number) => void;
-}
+import { useContext } from "react";
+import { CartContext } from "../store/CartContext";
 
-export default function Cart({ items, onUpdateItemQuantity }: CartProps) {
+export default function Cart() {
+  const { items, updateCartItemQuantity } = useContext(CartContext);
   const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const formattedTotalPrice = `$${totalPrice.toFixed(2)}`;
 
@@ -27,14 +26,14 @@ export default function Cart({ items, onUpdateItemQuantity }: CartProps) {
                 <div className="text-base flex gap-2 items-center">
                   <button
                     className="bg-transparent border-none rounded-md text-[#201e1a] cursor-pointer text-[1.1rem] hover:bg-[#f5b744] first-of-type:pb-[0.2rem]"
-                    onClick={() => onUpdateItemQuantity(item.id, -1)}
+                    onClick={() => updateCartItemQuantity(item.id, -1)}
                   >
                     -
                   </button>
                   <span>{item.quantity}</span>
                   <button
                     className="bg-transparent border-none rounded-md text-[#201e1a] cursor-pointer text-[1.1rem]  hover:bg-[#f5b744] first-of-type:pb-[0.2rem]"
-                    onClick={() => onUpdateItemQuantity(item.id, 1)}
+                    onClick={() => updateCartItemQuantity(item.id, 1)}
                   >
                     +
                   </button>
