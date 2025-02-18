@@ -6,11 +6,16 @@ interface CartContextProviderProps {
   children: ReactNode;
 }
 
-type ShoppingCartReducerActionType =
-  | { type: "ADD-ITEM"; payload: { id: string } }
-  | { type: "UPDATE-ITEM"; payload: { productId: string; amount: number } };
+enum ShoppingCartActionType {
+  ADD_ITEM = "ADD-ITEM",
+  UPDATE_ITEM = "UPDATE-ITEM"
+}
 
-function shoppingCartReducer(state: ShoppingCartType, action: ShoppingCartReducerActionType) {
+type ShoppingCartReducerAction =
+  | { type: ShoppingCartActionType.ADD_ITEM; payload: { id: string } }
+  | { type: ShoppingCartActionType.UPDATE_ITEM; payload: { productId: string; amount: number } };
+
+function shoppingCartReducer(state: ShoppingCartType, action: ShoppingCartReducerAction) {
   const { type, payload } = action;
 
   if (type === "ADD-ITEM") {
@@ -72,11 +77,14 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
   const [shoppingCartState, shoppingCartDispatch] = useReducer(shoppingCartReducer, { items: [] });
 
   function handleAddItemToCart(id: string) {
-    shoppingCartDispatch({ type: "ADD-ITEM", payload: { id } });
+    shoppingCartDispatch({ type: ShoppingCartActionType.ADD_ITEM, payload: { id } });
   }
 
   function handleUpdateCartItemQuantity(productId: string, amount: number) {
-    shoppingCartDispatch({ type: "UPDATE-ITEM", payload: { productId, amount } });
+    shoppingCartDispatch({
+      type: ShoppingCartActionType.UPDATE_ITEM,
+      payload: { productId, amount }
+    });
   }
 
   const cartValue: CartContextType = {
