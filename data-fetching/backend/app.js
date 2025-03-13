@@ -35,11 +35,14 @@ app.get("/user-places", async (req, res) => {
 });
 
 app.put("/user-places", async (req, res) => {
-  const places = req.body.places;
+  try {
+    const places = req.body.places;
+    await fs.writeFile("./data/user-places.json", JSON.stringify(places));
 
-  await fs.writeFile("./data/user-places.json", JSON.stringify(places));
-
-  res.status(200).json({ message: "User places updated!" });
+    res.status(200).json({ message: "User places updated!" });
+  } catch {
+    return res.status(404).json();
+  }
 });
 
 // 404
