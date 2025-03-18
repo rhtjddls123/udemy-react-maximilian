@@ -1,40 +1,38 @@
-import { FormEvent, useState } from "react";
+import { FormEvent } from "react";
 import Input from "./Input";
+import { useInput } from "../hooks/useInput";
+import { hasMinLength, isEmail, isNotEmpty } from "../util/validation";
 
 export default function StateLogin() {
-  const [enteredValue, setEnteredValue] = useState<LoginType>({
-    email: "",
-    password: ""
-  });
+  const {
+    value: emailValue,
+    handleInputBlur: handleEmailBlur,
+    handleInputChange: handleEmailChange,
+    hasError: emailHasError
+  } = useInput("", (value) => isEmail(value) && isNotEmpty(value));
 
-  const [didEdit, setDidEdit] = useState<Record<LoginKeyTypes, boolean>>({
-    email: false,
-    password: false
-  });
-
-  const emailIsInvalid = didEdit.email && !enteredValue.email.includes("@");
-  const passwordIsInvalid = didEdit.password && enteredValue.password.trim().length < 8;
+  const {
+    value: passwordVaule,
+    handleInputBlur: handlePasswordBlur,
+    handleInputChange: handlePasswordChange,
+    hasError: passwordHasError
+  } = useInput("", (value) => hasMinLength(value, 8));
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setDidEdit({ email: true, password: true });
 
-    if (enteredValue.email === "" || enteredValue.password === "") {
+    handleEmailBlur();
+    handlePasswordBlur();
+
+    if (!isNotEmpty(emailValue) || !isNotEmpty(passwordVaule)) {
       return;
     }
 
-    setEnteredValue({ email: "", password: "" });
-    setDidEdit({ email: false, password: false });
-    console.log(enteredValue);
-  };
+    if (emailHasError || passwordHasError) {
+      return;
+    }
 
-  const handleInputChange = (identifier: LoginKeyTypes, value: LoginType[LoginKeyTypes]) => {
-    setEnteredValue((prev) => ({ ...prev, [identifier]: value }));
-    setDidEdit((prev) => ({ ...prev, [identifier]: false }));
-  };
-
-  const handleInputBlur = (identifier: LoginKeyTypes) => {
-    setDidEdit((prev) => ({ ...prev, [identifier]: true }));
+    console.log(emailValue, passwordVaule);
   };
 
   return (
@@ -47,12 +45,10 @@ export default function StateLogin() {
           id="email"
           type="email"
           name="email"
-          onBlur={() => handleInputBlur("email")}
-          onChange={(e) => {
-            handleInputChange("email", e.target.value);
-          }}
-          value={enteredValue.email}
-          error={emailIsInvalid && "Please enter a valid email address!"}
+          onBlur={handleEmailBlur}
+          onChange={(e) => handleEmailChange(e.target.value)}
+          value={emailValue}
+          error={emailHasError && "Please enter a valid email address!"}
         />
 
         <Input
@@ -60,12 +56,12 @@ export default function StateLogin() {
           id="password"
           type="password"
           name="password"
-          onBlur={() => handleInputBlur("password")}
+          onBlur={handlePasswordBlur}
           onChange={(e) => {
-            handleInputChange("password", e.target.value);
+            handlePasswordChange(e.target.value);
           }}
-          value={enteredValue.password}
-          error={passwordIsInvalid && "Please enter a valid password!"}
+          value={passwordVaule}
+          error={passwordHasError && "Please enter a valid password!"}
         />
       </div>
 
