@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { OpinionsContext } from "./opinions-context";
+import { OpinionType } from "../types/types";
 
 interface OpinionsContextProviderProps {
   children: ReactNode;

@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import { OpinionType } from "../types/types";
 
 export interface OpinionsContextType {
   opinions: OpinionType[];

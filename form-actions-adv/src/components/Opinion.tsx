@@ -1,3 +1,5 @@
+import { OpinionType } from "../types/types";
+
 interface OpinionProps {
   opinion: OpinionType;
 }
