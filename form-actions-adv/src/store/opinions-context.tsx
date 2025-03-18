@@ -1,9 +1,9 @@
 import { createContext } from "react";
-import { OpinionType } from "../types/types";
+import { NewOpinionType, OpinionType } from "../types/types";
 
 export interface OpinionsContextType {
   opinions: OpinionType[];
-  addOpinion: (opinion: OpinionType) => void;
+  addOpinion: (opinion: NewOpinionType) => void;
   upvoteOpinion: (id: OpinionType["id"]) => void;
   downvoteOpinion: (id: OpinionType["id"]) => void;
 }

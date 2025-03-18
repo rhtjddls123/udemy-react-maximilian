@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { OpinionsContext } from "./opinions-context";
-import { OpinionType } from "../types/types";
+import { NewOpinionType, OpinionType } from "../types/types";
 
 interface OpinionsContextProviderProps {
   children: ReactNode;
@@ -19,7 +19,7 @@ export function OpinionsContextProvider({ children }: OpinionsContextProviderPro
     loadOpinions();
   }, []);
 
-  async function addOpinion(enteredOpinionData: OpinionType) {
+  async function addOpinion(enteredOpinionData: NewOpinionType) {
     const response = await fetch("http://localhost:3000/opinions", {
       method: "POST",
       headers: {
@@ -36,7 +36,15 @@ export function OpinionsContextProvider({ children }: OpinionsContextProviderPro
     setOpinions((prevOpinions) => [savedOpinion, ...prevOpinions]);
   }
 
-  function upvoteOpinion(id: OpinionType["id"]) {
+  async function upvoteOpinion(id: OpinionType["id"]) {
+    const response = await fetch(`http://localhost:3000/opinions/${id}/upvote`, {
+      method: "POST"
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
     setOpinions((prevOpinions) => {
       return prevOpinions.map((opinion) => {
         if (opinion.id === id) {
@@ -47,7 +55,15 @@ export function OpinionsContextProvider({ children }: OpinionsContextProviderPro
     });
   }
 
-  function downvoteOpinion(id: OpinionType["id"]) {
+  async function downvoteOpinion(id: OpinionType["id"]) {
+    const response = await fetch(`http://localhost:3000/opinions/${id}/downvote`, {
+      method: "POST"
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
     setOpinions((prevOpinions) => {
       return prevOpinions.map((opinion) => {
         if (opinion.id === id) {

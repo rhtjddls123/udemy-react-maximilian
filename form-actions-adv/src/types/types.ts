@@ -1,5 +1,5 @@
 export interface OpinionType {
-  id: string;
+  id: number;
   title: string;
   body: string;
   userName: string;
@@ -12,4 +12,4 @@ export interface NewOpinionType {
   body: string;
 }
 
-export type newOpinionType = keyof NewOpinionType;
+export type NewOpinionKeyTypes = keyof NewOpinionType;

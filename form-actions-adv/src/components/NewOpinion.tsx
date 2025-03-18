@@ -1,15 +1,19 @@
-import { useActionState } from "react";
-import { NewOpinionType, newOpinionType } from "../types/types";
+import { use, useActionState } from "react";
+import { NewOpinionType, NewOpinionKeyTypes } from "../types/types";
+import { OpinionsContext } from "../store/opinions-context";
+import Submit from "./Submit";
 
 export function NewOpinion() {
-  function shareOpinionAction(
+  const { addOpinion } = use(OpinionsContext);
+
+  async function shareOpinionAction(
     _: {
       errors: string[] | null;
       enteredValues?: NewOpinionType;
     },
     formData: FormData
   ) {
-    const getField = (key: newOpinionType) => formData.get(key) as string;
+    const getField = (key: NewOpinionKeyTypes) => formData.get(key) as string;
     const userName = getField("userName");
     const title = getField("title");
     const body = getField("body");
@@ -30,6 +34,7 @@ export function NewOpinion() {
 
     if (errors.length > 0) return { errors, enteredValues: { userName, title, body } };
 
+    await addOpinion({ title, userName, body });
     return { errors: null };
   }
 
@@ -78,9 +83,7 @@ export function NewOpinion() {
           </ul>
         )}
 
-        <p className="actions">
-          <button type="submit">Submit</button>
-        </p>
+        <Submit />
       </form>
     </div>
   );
