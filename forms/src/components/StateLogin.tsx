@@ -1,18 +1,32 @@
 import { FormEvent, useState } from "react";
 
 export default function StateLogin() {
-  const [enteredValue, setEnteredValue] = useState<LoginValueType>({ email: "", password: "" });
+  const [enteredValue, setEnteredValue] = useState<LoginType>({
+    email: "",
+    password: ""
+  });
+
+  const [didEdit, setDidEdit] = useState<Record<LoginKeyTypes, boolean>>({
+    email: false,
+    password: false
+  });
+
+  const emailIsInvalid = didEdit.email && !enteredValue.email.includes("@");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setEnteredValue({ email: "", password: "" });
+    setDidEdit({ email: false, password: false });
     console.log(enteredValue);
   };
 
-  const handleInputChange = (
-    identifier: keyof LoginValueType,
-    value: LoginValueType[keyof LoginValueType]
-  ) => {
+  const handleInputChange = (identifier: LoginKeyTypes, value: LoginType[LoginKeyTypes]) => {
     setEnteredValue((prev) => ({ ...prev, [identifier]: value }));
+    setDidEdit((prev) => ({ ...prev, [identifier]: false }));
+  };
+
+  const handleInputBlur = (identifier: LoginKeyTypes) => {
+    setDidEdit((prev) => ({ ...prev, [identifier]: true }));
   };
 
   return (
@@ -26,11 +40,15 @@ export default function StateLogin() {
             id="email"
             type="email"
             name="email"
+            onBlur={() => handleInputBlur("email")}
             onChange={(e) => {
               handleInputChange("email", e.target.value);
             }}
             value={enteredValue.email}
           />
+          <div className="control-error">
+            {emailIsInvalid && <p>Please enter a valid email address.</p>}
+          </div>
         </div>
 
         <div className="control no-margin">

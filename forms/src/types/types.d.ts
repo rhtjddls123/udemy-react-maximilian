@@ -1,7 +1,6 @@
-interface LoginValueType {
-  email: string;
-  password: string;
-}
+type LoginType = Record<LoginKeyTypes, string | number>;
+
+type LoginKeyTypes = "email" | "password";
 
 type SignupKeyTypes =
   | "email"
