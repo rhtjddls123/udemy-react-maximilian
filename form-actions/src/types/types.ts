@@ -1,4 +1,4 @@
-const formKeys = {
+export const formKeys = {
   email: "email",
   password: "password",
   confirmPassword: "confirm-password",
@@ -9,6 +9,6 @@ const formKeys = {
   terms: "terms"
 } as const;
 
-type SignupKeyTypes = keyof typeof formKeys;
+export type SignupKeyTypes = keyof typeof formKeys;
 
-type SignupType = Record<SignupKeyTypes, FormDataEntryValue | FormDataEntryValue[]>;
+export type SignupType = Record<SignupKeyTypes, FormDataEntryValue | FormDataEntryValue[]>;

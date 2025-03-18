@@ -1,9 +1,10 @@
 import { useActionState } from "react";
 import { hasMinLength, isEmail, isEqualToOtherValue, isNotEmpty } from "../util/validation";
+import { formKeys, SignupKeyTypes } from "../types/types";
 
 export default function Signup() {
   function signupAction(_: { errors: string[] | null }, formData: FormData) {
-    const getField = <T extends SignupKeyTypes>(key: T) => formData.get(key) as string;
+    const getField = <T extends SignupKeyTypes>(key: T) => formData.get(formKeys[key]) as string;
 
     const email = getField("email");
     const password = getField("password");
