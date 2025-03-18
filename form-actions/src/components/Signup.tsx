@@ -2,18 +2,17 @@ import { useActionState } from "react";
 import { hasMinLength, isEmail, isEqualToOtherValue, isNotEmpty } from "../util/validation";
 
 export default function Signup() {
-  function signupAction(
-    _: { errors: string[] | null; enteredValue?: SignupType },
-    formData: FormData
-  ) {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirm-password") as string;
-    const firstName = formData.get("first-name") as string;
-    const lastName = formData.get("last-name") as string;
-    const role = formData.get("role") as string;
-    const acquisition = formData.getAll("acquisition") as string[];
-    const terms = formData.get("terms") as string;
+  function signupAction(_: { errors: string[] | null }, formData: FormData) {
+    const getField = <T extends SignupKeyTypes>(key: T) => formData.get(key) as string;
+
+    const email = getField("email");
+    const password = getField("password");
+    const confirmPassword = getField("confirmPassword");
+    const firstName = getField("firstName");
+    const lastName = getField("lastName");
+    const role = getField("role");
+    const acquisition = formData.getAll(formKeys["acquisition"]) as string[];
+    const terms = getField("terms");
 
     const errors = [];
 
