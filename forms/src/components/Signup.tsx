@@ -5,9 +5,8 @@ export default function Signup() {
     e.preventDefault();
 
     const fd = new FormData(e.currentTarget);
-    const data: Record<string, FormDataEntryValue | FormDataEntryValue[]> = Object.fromEntries(
-      fd.entries()
-    );
+    const data: Partial<Record<SignupKeyTypes, FormDataEntryValue | FormDataEntryValue[]>> =
+      Object.fromEntries(fd.entries());
     const acquistionChannel = fd.getAll("acquisition");
     data.acquisition = acquistionChannel;
 
