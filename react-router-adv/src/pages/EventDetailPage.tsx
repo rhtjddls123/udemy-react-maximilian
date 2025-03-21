@@ -1,5 +1,6 @@
 import {
   ActionFunctionArgs,
+  Await,
   LoaderFunctionArgs,
   Params,
   redirect,
@@ -8,10 +9,30 @@ import {
 import EventItem from "../components/EventItem";
 import { EventType, parameterIds } from "../types/type";
 import { ROUTER_IDS } from "../constants/constants";
+import EventsList from "../components/EventsList";
+import { Suspense } from "react";
+import { fetchData } from "../utils/http";
+
+interface loadedDataType {
+  event: Promise<{ event: EventType }>;
+  events: Promise<{ events: EventType[] }>;
+}
 
 const EventDetailPage = () => {
-  const { event } = useRouteLoaderData(ROUTER_IDS.EVENT_DETAIL) as { event: EventType };
-  return <EventItem event={event} />;
+  const { event, events } = useRouteLoaderData(ROUTER_IDS.EVENT_DETAIL) as loadedDataType;
+
+  return (
+    <>
+      <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
+        <Await resolve={event}>{(loadedEvent) => <EventItem event={loadedEvent.event} />}</Await>
+      </Suspense>
+      <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
+        <Await resolve={events}>
+          {(loadedEvents) => <EventsList events={loadedEvents.events} />}
+        </Await>
+      </Suspense>
+    </>
+  );
 };
 
 export default EventDetailPage;
@@ -20,18 +41,13 @@ interface eventDetailLoaderArgs extends LoaderFunctionArgs {
   params: Params<parameterIds>;
 }
 
-export async function eventDetailLoader({ params }: eventDetailLoaderArgs) {
+export function eventDetailLoader({ params }: eventDetailLoaderArgs) {
   const id = params.eventId;
-  const response = await fetch(`http://localhost:8080/events/${id}`);
 
-  if (!response.ok) {
-    throw new Response(JSON.stringify({ message: "Could not fetch details for selected event." }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
-  } else {
-    return response;
-  }
+  const event = fetchData<{ event: EventType }>(`http://localhost:8080/events/${id}`);
+  const events = fetchData<{ events: EventType[] }>("http://localhost:8080/events");
+
+  return { events, event };
 }
 
 interface deleteEventActoinArgs extends ActionFunctionArgs {

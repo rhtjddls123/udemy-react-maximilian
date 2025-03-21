@@ -1,29 +1,25 @@
-import { useLoaderData } from "react-router-dom";
+import { Await, useLoaderData } from "react-router-dom";
 import EventsList from "../components/EventsList";
 import { EventType } from "../types/type";
+import { Suspense } from "react";
+import { fetchData } from "../utils/http";
+
+type loadedDataType = { data: Promise<{ events: EventType[] }> };
 
 function EventsPage() {
-  const data: { events: EventType[] } = useLoaderData();
-  const events = data.events;
+  const { data } = useLoaderData<loadedDataType>();
 
   return (
-    <>
-      <EventsList events={events} />
-    </>
+    <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
+      <Await resolve={data}>{(loadedEvents) => <EventsList events={loadedEvents.events} />}</Await>
+    </Suspense>
   );
 }
 
 export default EventsPage;
 
-export async function eventsLoader() {
-  const response = await fetch("http://localhost:8080/events");
+export function eventsLoader() {
+  const data = fetchData<{ events: EventType[] }>("http://localhost:8080/events");
 
-  if (!response.ok) {
-    throw new Response(JSON.stringify({ message: "Could not fetch events" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
-  } else {
-    return response;
-  }
+  return { data };
 }
