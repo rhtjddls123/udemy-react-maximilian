@@ -12,6 +12,9 @@ import ErrorPage from "./pages/ErrorPage";
 import { PARAMS_IDS, ROUTER_IDS } from "./constants/constants";
 import { manipulateEventAction } from "./components/EventForm";
 import NewsletterPage, { newsletterAction } from "./pages/NewsletterPage";
+import AuthenticationPage, { authAction } from "./pages/AuthenticationPage";
+import { logoutAction } from "./pages/LogoutPage";
+import { checkAuthLodaer, loaderToken } from "./utils/auth";
 
 // 1. Add five new (dummy) page components (content can be simple <h1> elements)
 //    - HomePage
@@ -38,6 +41,8 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     errorElement: <ErrorPage />,
+    id: "root",
+    loader: loaderToken,
     children: [
       { index: true, element: <HomePage /> },
       {
@@ -55,17 +60,33 @@ const router = createBrowserRouter([
             id: ROUTER_IDS.EVENT_DETAIL,
             children: [
               { index: true, element: <EventDetailPage />, action: deleteEventActoin },
-              { path: "edit", element: <EditEventPage />, action: manipulateEventAction }
+              {
+                path: "edit",
+                element: <EditEventPage />,
+                action: manipulateEventAction,
+                loader: checkAuthLodaer
+              }
             ]
           },
-          { path: "new", element: <NewEventPage />, action: manipulateEventAction }
+          {
+            path: "new",
+            element: <NewEventPage />,
+            action: manipulateEventAction,
+            loader: checkAuthLodaer
+          }
         ]
       },
       {
         path: "newsletter",
         element: <NewsletterPage />,
         action: newsletterAction
-      }
+      },
+      {
+        path: "auth",
+        element: <AuthenticationPage />,
+        action: authAction
+      },
+      { path: "logout", action: logoutAction }
     ]
   }
 ]);

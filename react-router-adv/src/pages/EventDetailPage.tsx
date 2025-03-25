@@ -12,6 +12,7 @@ import { ROUTER_IDS } from "../constants/constants";
 import EventsList from "../components/EventsList";
 import { Suspense } from "react";
 import { fetchData } from "../utils/http";
+import { getAuthToken } from "../utils/auth";
 
 interface loadedDataType {
   event: Promise<{ event: EventType }>;
@@ -41,7 +42,7 @@ interface eventDetailLoaderArgs extends LoaderFunctionArgs {
   params: Params<parameterIds>;
 }
 
-export function eventDetailLoader({ params }: eventDetailLoaderArgs) {
+export async function eventDetailLoader({ params }: eventDetailLoaderArgs) {
   const id = params.eventId;
 
   const event = fetchData<{ event: EventType }>(`http://localhost:8080/events/${id}`);
@@ -56,7 +57,12 @@ interface deleteEventActoinArgs extends ActionFunctionArgs {
 
 export async function deleteEventActoin({ params, request }: deleteEventActoinArgs) {
   const id = params.eventId;
-  const response = await fetch(`http://localhost:8080/events/${id}`, { method: request.method });
+  const token = getAuthToken();
+
+  const response = await fetch(`http://localhost:8080/events/${id}`, {
+    method: request.method,
+    headers: { Authorization: "Bearer " + token }
+  });
 
   if (!response.ok) {
     throw new Response(JSON.stringify({ message: "Could not delete event." }), {

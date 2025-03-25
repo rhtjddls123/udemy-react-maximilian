@@ -11,6 +11,7 @@ import {
 
 import classes from "./EventForm.module.css";
 import { ActionResponseType, EventType, parameterIds } from "../types/type";
+import { getAuthToken } from "../utils/auth";
 
 interface EventFormProps {
   method: HTMLFormMethod;
@@ -99,9 +100,10 @@ export async function manipulateEventAction({ request, params }: manipulateEvent
     url = `http://localhost:8080/events/${id}`;
   }
 
+  const token = getAuthToken();
   const response = await fetch(url, {
     method: method,
-    headers: { "Content-type": "application/json" },
+    headers: { "Content-type": "application/json", Authorization: "Bearer " + token },
     body: JSON.stringify(eventData)
   });
 

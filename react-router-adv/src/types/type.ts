@@ -25,3 +25,13 @@ export interface ActionResponseType {
 export interface NewsletterSignupResponseType {
   message: string;
 }
+
+export type ModeType = "login" | "signup";
+
+export interface AuthActionResponseType {
+  message: string;
+  errors?: {
+    email: string;
+    password: string;
+  };
+}
