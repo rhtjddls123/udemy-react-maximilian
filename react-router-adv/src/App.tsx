@@ -1,50 +1,40 @@
 // Challenge / Exercise
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import RootLayout from "./pages/RootLayout";
-import HomePage from "./pages/HomePage";
-import EventsPage, { eventsLoader } from "./pages/EventsPage";
-import EventDetailPage, { deleteEventActoin, eventDetailLoader } from "./pages/EventDetailPage";
-import NewEventPage from "./pages/NewEventPage";
-import EditEventPage from "./pages/EditEventPage";
-import EventsRootLayout from "./pages/EventsRootLayout";
-import ErrorPage from "./pages/ErrorPage";
 import { PARAMS_IDS, ROUTER_IDS } from "./constants/constants";
-import { manipulateEventAction } from "./components/EventForm";
-import NewsletterPage, { newsletterAction } from "./pages/NewsletterPage";
-import AuthenticationPage, { authAction } from "./pages/AuthenticationPage";
-import { logoutAction } from "./pages/LogoutPage";
-import { checkAuthLodaer, loaderToken } from "./utils/auth";
+import { lazy, Suspense } from "react";
 
-// 1. Add five new (dummy) page components (content can be simple <h1> elements)
-//    - HomePage
-//    - EventsPage
-//    - EventDetailPage
-//    - NewEventPage
-//    - EditEventPage
-// 2. Add routing & route definitions for these five pages
-//    - / => HomePage
-//    - /events => EventsPage
-//    - /events/<some-id> => EventDetailPage
-//    - /events/new => NewEventPage
-//    - /events/<some-id>/edit => EditEventPage
-// 3. Add a root layout that adds the <MainNavigation> component above all page components
-// 4. Add properly working links to the MainNavigation
-// 5. Ensure that the links in MainNavigation receive an "active" class when active
-// 6. Output a list of dummy events to the EventsPage
-//    Every list item should include a link to the respective EventDetailPage
-// 7. Output the ID of the selected event on the EventDetailPage
-// BONUS: Add another (nested) layout route that adds the <EventNavigation> component above all /events... page components
+const HomePage = lazy(() => import("./pages/HomePage"));
+const RootLayout = lazy(() => import("./pages/RootLayout"));
+const EventsPage = lazy(() => import("./pages/EventsPage"));
+const EventDetailPage = lazy(() => import("./pages/EventDetailPage"));
+const NewEventPage = lazy(() => import("./pages/NewEventPage"));
+const EditEventPage = lazy(() => import("./pages/EditEventPage"));
+const EventsRootLayout = lazy(() => import("./pages/EventsRootLayout"));
+const ErrorPage = lazy(() => import("./pages/ErrorPage"));
+const NewsletterPage = lazy(() => import("./pages/NewsletterPage"));
+const AuthenticationPage = lazy(() => import("./pages/AuthenticationPage"));
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
-    errorElement: <ErrorPage />,
+    element: (
+      <Suspense fallback={<p>Loading...</p>}>
+        <RootLayout />
+      </Suspense>
+    ),
+    errorElement: (
+      <Suspense fallback={<p>Loading...</p>}>
+        <ErrorPage />
+      </Suspense>
+    ),
     id: "root",
-    loader: loaderToken,
+    loader: () => import("./utils/auth").then((module) => module.loaderToken()),
     children: [
-      { index: true, element: <HomePage /> },
+      {
+        index: true,
+        element: <HomePage />
+      },
       {
         path: "events",
         element: <EventsRootLayout />,
@@ -52,41 +42,56 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <EventsPage />,
-            loader: eventsLoader
+            loader: async () => (await import("./pages/EventsPage")).eventsLoader()
           },
           {
             path: `:${PARAMS_IDS.EVENT_ID}`,
-            loader: eventDetailLoader,
+            loader: async (meta) =>
+              (await import("./pages/EventDetailPage")).eventDetailLoader(meta),
             id: ROUTER_IDS.EVENT_DETAIL,
             children: [
-              { index: true, element: <EventDetailPage />, action: deleteEventActoin },
+              {
+                index: true,
+                element: <EventDetailPage />,
+                action: (meta) =>
+                  import("./pages/EventDetailPage").then((module) => module.deleteEventActoin(meta))
+              },
               {
                 path: "edit",
                 element: <EditEventPage />,
-                action: manipulateEventAction,
-                loader: checkAuthLodaer
+                action: (meta) =>
+                  import("./components/EventForm").then((module) =>
+                    module.manipulateEventAction(meta)
+                  ),
+                loader: () => import("./utils/auth").then((module) => module.checkAuthLodaer())
               }
             ]
           },
           {
             path: "new",
             element: <NewEventPage />,
-            action: manipulateEventAction,
-            loader: checkAuthLodaer
+            action: (meta) =>
+              import("./components/EventForm").then((module) => module.manipulateEventAction(meta)),
+            loader: () => import("./utils/auth").then((module) => module.checkAuthLodaer())
           }
         ]
       },
       {
         path: "newsletter",
         element: <NewsletterPage />,
-        action: newsletterAction
+        action: (meta) =>
+          import("./pages/NewsletterPage").then((module) => module.newsletterAction(meta))
       },
       {
         path: "auth",
         element: <AuthenticationPage />,
-        action: authAction
+        action: (meta) =>
+          import("./pages/AuthenticationPage").then((module) => module.authAction(meta))
       },
-      { path: "logout", action: logoutAction }
+      {
+        path: "logout",
+        action: () => import("./pages/LogoutPage").then((module) => module.logoutAction())
+      }
     ]
   }
 ]);
