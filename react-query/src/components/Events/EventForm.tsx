@@ -1,7 +1,10 @@
 import { FormEvent, ReactNode, useState } from "react";
 
 import ImagePicker from "../ImagePicker.jsx";
-import { InputDataType } from "../../types/type.js";
+import { FetchErrorType, ImageType, InputDataType } from "../../types/type.js";
+import { useQuery } from "@tanstack/react-query";
+import { fetchSelectableImages } from "../../utils/http.js";
+import ErrorBlock from "../UI/ErrorBlock.js";
 
 interface EventFormProps {
   inputData?: InputDataType | null;
@@ -11,6 +14,11 @@ interface EventFormProps {
 
 export default function EventForm({ inputData, onSubmit, children }: EventFormProps) {
   const [selectedImage, setSelectedImage] = useState(inputData?.image);
+
+  const { data, isPending, isError, error } = useQuery<ImageType[], FetchErrorType>({
+    queryKey: ["events-images"],
+    queryFn: fetchSelectableImages
+  });
 
   function handleSelectImage(image: InputDataType["image"]) {
     setSelectedImage(image);
@@ -32,9 +40,18 @@ export default function EventForm({ inputData, onSubmit, children }: EventFormPr
         <input type="text" id="title" name="title" defaultValue={inputData?.title ?? ""} />
       </p>
 
-      <div className="control">
-        <ImagePicker images={[]} onSelect={handleSelectImage} selectedImage={selectedImage} />
-      </div>
+      {isPending && <p>Loading selectable images...</p>}
+      {isError && (
+        <ErrorBlock
+          title="Failed to load selectable images"
+          message={error.info?.message || "Please try again later."}
+        />
+      )}
+      {data && (
+        <div className="control">
+          <ImagePicker images={data} onSelect={handleSelectImage} selectedImage={selectedImage} />
+        </div>
+      )}
 
       <p className="control">
         <label htmlFor="description">Description</label>
