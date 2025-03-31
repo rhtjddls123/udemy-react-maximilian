@@ -6,9 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchEvents } from "../../utils/http.js";
 
 export default function NewEventsSection() {
-  const { data, error, isError, isPending } = useQuery<EventType[], FetchErrorType>({
-    queryKey: ["events"],
-    queryFn: fetchEvents
+  const { data, error, isError, isPending } = useQuery<
+    EventType[],
+    FetchErrorType,
+    EventType[],
+    [string, { max: number }]
+  >({
+    queryKey: ["events", { max: 3 }],
+    queryFn: ({ signal, queryKey }) => fetchEvents({ signal, ...queryKey[1] })
   });
 
   let content;

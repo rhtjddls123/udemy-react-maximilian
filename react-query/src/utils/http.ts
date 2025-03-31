@@ -5,15 +5,21 @@ export const queryClient = new QueryClient();
 
 export async function fetchEvents({
   signal,
-  searchTerm
+  searchTerm,
+  max
 }: {
   signal: AbortSignal;
   searchTerm?: string;
+  max?: number;
 }) {
   let url = "http://localhost:3000/events";
 
-  if (searchTerm) {
+  if (searchTerm && max) {
+    url += "?search=" + searchTerm + "&max=" + max;
+  } else if (searchTerm) {
     url += "?search=" + searchTerm;
+  } else if (max) {
+    url += "?max=" + max;
   }
 
   const response = await fetch(url, { signal });
@@ -88,6 +94,25 @@ export async function deleteEvent({ id }: { id?: string }) {
 
   if (!response.ok) {
     const error: FetchErrorType = new Error("An error occurred while deleting the event");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  return response.json();
+}
+
+export async function updateEvent({ id, event }: { id?: string; event: InputDataType }) {
+  const response = await fetch(`http://localhost:3000/events/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ event }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!response.ok) {
+    const error: FetchErrorType = new Error("An error occurred while updating the event");
     error.code = response.status;
     error.info = await response.json();
     throw error;
